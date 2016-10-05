@@ -1,2 +1,3 @@
 * tt
 asd
+[[http://www.openwarp.com/pix/testimage_SVGA.jpg]]
