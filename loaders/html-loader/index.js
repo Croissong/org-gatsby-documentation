@@ -1,18 +1,23 @@
-import htmlFrontMatter from 'html-frontmatter'
-import objectAssign from 'object-assign'
 import $ from 'cheerio';
 import _ from 'lodash';
 
-module.exports = function (content) {
-  let parsedHTML = $.load(content);
-  let reactData = getReactData(parsedHTML);
-  this.cacheable()
-  const data = objectAssign({}, htmlFrontMatter(content), { body: content })
-  this.value = data
-  return `module.exports = ${JSON.stringify(data)}`
+
+module.exports = function (html) {
+  let data = parseContent(html); 
+  this.cacheable(); 
+  this.value = data;
+  return `module.exports = ${JSON.stringify(data)}`;
+};
+
+function parseContent(html) {
+  let parsedHTML = $.load(html); 
+  let script = getTagContent(parsedHTML, 'script');
+  let reactData = script ? JSON.parse(script) : {};
+  let title = getTagContent(parsedHTML, 'title'); 
+  let body = parsedHTML('body').html();
+  return {body, reactData, title};
 }
 
-function getReactData(html) {
-  let json = _.get(html('script').get()[0], 'children[0].data');
-  return json ? JSON.parse(json) : {};
+function getTagContent(html, tag) {
+  return _.get(html(tag).get()[0], 'children[0].data');
 }
