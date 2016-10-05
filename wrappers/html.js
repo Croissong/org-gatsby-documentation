@@ -10,6 +10,7 @@ module.exports = React.createClass({
   },
   render () {
     const page = this.props.route.page.data
+    console.log(page)
     return (
       <div dangerouslySetInnerHTML={{ __html: page.body }} />
     )
