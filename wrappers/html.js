@@ -1,8 +1,14 @@
 import React from 'react'
+import { Provider } from 'react-redux'
 import Helmet from 'react-helmet'
 import DocumentTitle from 'react-document-title'
 import { config } from 'config'
 import { Images, openLightbox } from 'utils/images';
+import { createStore } from 'redux'
+import Counter from 'components/Counter'
+import counter from 'reducers'
+
+const store = createStore(counter)
 
 module.exports = React.createClass({
   propTypes () {
@@ -25,13 +31,15 @@ module.exports = React.createClass({
     const page = this.props.route.page.data
     let {images} = page.reactData;
     return (
-      <DocumentTitle title={`${page.title} | ${config.siteTitle}`}>
-        <div className="markdown" onClick={this.onClick}>
-          <h1>{page.title}</h1>
-          <div dangerouslySetInnerHTML={{ __html: page.body }} />
-          <Images images={images} />
-        </div>
-      </DocumentTitle>
+      <Provider store={store}>
+        <DocumentTitle title={`${page.title} | ${config.siteTitle}`}>
+          <div className="markdown" onClick={this.onClick}>
+            <h1>{page.title}</h1>
+            <div dangerouslySetInnerHTML={{ __html: page.body }} /> 
+            <Counter />
+          </div>
+        </DocumentTitle>
+      </Provider>
     )
   },
 })
